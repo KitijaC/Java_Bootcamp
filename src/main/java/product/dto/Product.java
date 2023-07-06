@@ -74,13 +74,12 @@ public class Product {
 
     @Override
     public String toString() {
-        return "Product{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", price=" + price +
-                ", quantity=" + quantity +
-                ", category=" + category +
-                ", isAvailable=" + isAvailable +
-                '}';
+        String isAvailable = this.isAvailable ? "yes" : "no";
+        return name +
+                " | \t" + price +
+                " | \t" + quantity +
+                " | \t" + category +
+                " | \t" + isAvailable +
+                " | \t" + id;
     }
 }

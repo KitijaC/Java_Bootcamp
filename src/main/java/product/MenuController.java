@@ -5,6 +5,7 @@ package product;
 import product.dto.Category;
 import product.dto.Product;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -19,27 +20,25 @@ public class MenuController {
     }
 
     public void start() {
-        System.out.println("""
+        String userChoice = this.getInfo("""
         Welcome to Product Management
         please choose an option
            1. Add product
            2. View products
            3. Find product
-           4. Delete Product
-           5. Quit
+           4. Delete product
+           5. Update product
+           6. Quit
         """);
-
-        String userChoice = scanner.nextLine();
 
         switch (userChoice) {
             case "1":
                 //Add product
-
                 this.createProduct();
                 break;
             case "2":
                 //View products
-
+                this.displayProducts();
                 break;
             case "3":
                 //Find product
@@ -50,13 +49,14 @@ public class MenuController {
 
                 break;
             case "5":
+                // update product
+            case "6":
                 // Quit
-
-                System.out.println("goodbye!");
+                displayMessage("goodbye!");
                 System.exit(0); // 0 means that everything is ok, but can set what number you want
                 break;
             default:
-                System.out.println("Please choose an option from the menu");
+                displayMessage("Please choose an option from the menu");
                 break;
         }
 
@@ -66,27 +66,40 @@ public class MenuController {
 
     }
 
+    private void displayProducts() {
+        ArrayList<Product> products = this.productService.getAllProducts();
+
+        displayMessage("Name \t | Price \t | Quantity \t | Category \t | isAvailable \t | ID");
+        for (Product currentProduct: products) {
+            // do something with product
+            displayMessage(currentProduct.toString());
+        }
+    }
+
     private void createProduct() {
-        Product product = this.collectProductInfo();
-        String result = this.productService.addProduct(product);
-        System.out.println(result);
-        // use product service to add product
+        try {
+            Product product = this.collectProductInfo();
+            String result = this.productService.addProduct(product);
+            displayMessage(result);
+            // use product service to add product
+        } catch (Exception exception) {
+            displayMessage("Error: " + exception.getMessage());
+        } finally {
+            // what does this do? finally will happen in any situation -
+            // with or without error (clean up, wrap up etc.)
+            if (this.getInfo("Do you want to add a new product? (yes / no):").equals("yes")) this.createProduct();
+        }
     }
 
     private Product collectProductInfo() {
         Product product = new Product();
-
-        System.out.println("Please enter product name");
-        product.setName(this.scanner.nextLine());
-
-        System.out.println("Please enter product price:");
-        product.setPrice(Double.parseDouble(this.scanner.nextLine()));
-
-        System.out.println("Please enter product quantity:");
-        product.setQuantity(Double.parseDouble(this.scanner.nextLine()));
-
-        System.out.println("Write product category (ELECTRONICS, FOOD, DRINK, CLOTHING, APPAREL): ");
-        product.setCategory(Category.valueOf(this.scanner.nextLine().toUpperCase()));
+        product.setName(getInfo("Please enter product name"));
+        product.setPrice(Double.parseDouble(this.getInfo("Please enter product price:")));
+        product.setQuantity(Double.parseDouble(this.getInfo("Please enter product quantity:")));
+        Category category = Category.valueOf(
+                this.getInfo("Write product category (ELECTRONICS, FOOD, DRINK, CLOTHING, APPAREL): ").toUpperCase()
+        );
+        product.setCategory(category);
 
         product.setId(UUID.randomUUID());
         product.setAvailable(true);
@@ -94,11 +107,19 @@ public class MenuController {
         return product;
     }
 
-    private void addProduct() {
-        // add the product using product services
+//    private void addProduct() {
+//        // add the product using product services
+//
+//    }
 
+    public void displayMessage(String message) { // this is better way than sout
+        System.out.println(message);
     }
 
-
+    public String getInfo(String message) {
+        System.out.println(message);
+        //String userInput = scanner.nextLine(); - the same as under this
+        return scanner.nextLine();
+    }
 
 }
