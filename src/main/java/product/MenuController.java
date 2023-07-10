@@ -42,11 +42,11 @@ public class MenuController {
                 break;
             case "3":
                 //Find product
-
+                this.findProduct();
                 break;
             case "4":
                 //Delete Product
-
+                this.deleteProduct();
                 break;
             case "5":
                 // update product
@@ -66,12 +66,29 @@ public class MenuController {
 
     }
 
-    private void displayProducts() {
-        ArrayList<Product> products = this.productService.getAllProducts();
+    private void deleteProduct() {
+        try {
+            UUID productId = UUID.fromString(this.getInfo("Please enter product id to delete: "));
+            String message = this.productService.removeProductById(productId);
+            this.displayMessage(message);
+        } catch (Exception exception) {
+            this.displayMessage(exception.getMessage());
+        }
+    }
 
+    private void findProduct() {
+        String userInput = this.getInfo("Enter the name, ID or category of product to find: ");
+        this.showProductList(this.productService.findProductsByDetail(userInput.toLowerCase()));
+
+    }
+
+    private void displayProducts() {
+        this.showProductList(this.productService.getAllProducts());
+    }
+
+    private void showProductList(ArrayList<Product> products) {
         displayMessage("Name \t | Price \t | Quantity \t | Category \t | isAvailable \t | ID");
         for (Product currentProduct: products) {
-            // do something with product
             displayMessage(currentProduct.toString());
         }
     }
