@@ -68,6 +68,10 @@ public class Product {
         return isAvailable;
     }
 
+    public boolean getAvailable() {
+        return isAvailable;
+    }
+
     public void setAvailable(boolean available) {
         isAvailable = available;
     }

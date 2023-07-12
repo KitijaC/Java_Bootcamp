@@ -46,4 +46,25 @@ public class ProductService {
         if (result) return "Product removed successfully!";
         return "Incorrect product id, please try again";
     }
+
+    public Product findProductById(UUID productId) {
+        /** example throw an exception if no product is found
+         * if(this.findProductsByDetail(productId.toString()).isEmpty()) throw new RuntimeException();
+         **/
+        return this.findProductsByDetail(productId.toString()).get(0);
+    }
+
+    public String updateProduct(Product product) {
+        for (Product currentProduct: this.products) {
+            if (currentProduct.getId().equals(product.getId())) {
+                currentProduct.setName(product.getName());
+                currentProduct.setQuantity(product.getQuantity());
+                currentProduct.setCategory(product.getCategory());
+                currentProduct.setPrice(product.getPrice());
+                currentProduct.setAvailable(product.getAvailable());
+                break;
+            }
+        }
+        return "Product updated successfully!";
+    }
 }

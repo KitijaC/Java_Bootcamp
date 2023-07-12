@@ -50,6 +50,8 @@ public class MenuController {
                 break;
             case "5":
                 // update product
+                this.updateProduct();
+                break;
             case "6":
                 // Quit
                 displayMessage("goodbye!");
@@ -64,6 +66,32 @@ public class MenuController {
         this.start();
 
 
+    }
+
+    private void updateProduct() {
+        try {
+            UUID productId = UUID.fromString(this.getInfo("Please enter product id to update: "));
+            Product product = this.productService.findProductById(productId);
+            this.displayMessage("To update product " + product.getName() +
+                    ", please enter new values or empty space to skip a field;");
+            /*
+            one option is to do this way:
+            String updatedName = this.getInfo("Enter name ");
+            product.setName(this.getInfo("Enter name ").isEmpty() ? product.getName() : updatedName);
+            */
+
+            Product updatedProduct = this.collectProductInfo();
+            product.setName(updatedProduct.getName().isBlank() ? product.getName() : updatedProduct.getName());
+            //product.setAvailable(updatedProduct.getAvailable() == null ? product.getName() : updatedProduct.getName());
+            product.setPrice(updatedProduct.getPrice() <= 0 ? product.getPrice() : updatedProduct.getPrice());
+            //product.setCategory(updatedProduct.getCategory(). ? product.getCategory() : updatedProduct.getCategory());
+            product.setQuantity(updatedProduct.getQuantity() <= 0 ? product.getQuantity() : updatedProduct.getQuantity());
+
+            String message = this.productService.updateProduct(product);
+            this.displayMessage(message);
+        } catch (Exception exception) {
+            this.displayMessage(exception.getMessage());
+        }
     }
 
     private void deleteProduct() {
